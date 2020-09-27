@@ -3,15 +3,35 @@ import { AttachFile, MoreVert, SearchOutlined } from '@material-ui/icons';
 import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon";
 import MicIcon from "@material-ui/icons/Mic";
 import React, { useState, useEffect} from 'react';
+import { useParams } from 'react-router-dom';
 import './Chat.css';
+import db from './Firebase';
 
 function Chat() {
 
-    const [seed, setSeed] = useState('');
+    const[seed, setSeed] = useState('');
+    const[input, setInput] = useState('');
+    const { roomId } = useParams();
+    const[roomName, setRoomName] = useState('');
+
+    useEffect(() => {
+        if (roomId) {
+            db.collection('rooms').doc(roomId).onSnapshot(snapshot => (
+                setRoomName(snapshot.data().name)
+            ))
+        }
+    }, [roomId])
 
     useEffect(() => {
         setSeed(Math.floor(Math.random()*5000))
     }, [])
+
+    const sendMessage = (e) => {
+        e.preventDefault();
+        console.log(input);
+
+        setInput('');
+    }
 
     return (
         <div className="chat">
@@ -43,8 +63,8 @@ function Chat() {
             <div className="chat__footer">
                 <InsertEmoticonIcon />
                 <form>
-                    <input type="text"/>
-                    <button>Send Message</button>
+                    <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Type a message" type="text"/>
+                    <button onClick={sendMessage} type="submit">Send Message</button>
                 </form>
                 <MicIcon />
             </div>
