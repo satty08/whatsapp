@@ -1,31 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Sidebar from './Sidebar';
 import Chat from './Chat';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import Login from './Login';
+import { useStateValue } from './StateProvider';
 
 function App() {
 
-    //BEM naming convention
+    const[{user}, dispatch] = useStateValue();
 
     return(
+        //BEM naming convention
         <div className="app">
             {/* <h1>Welcome to Whatsapp</h1> */}
-            <div className="app__body">
+            {!user ?  (
+                <Login />
+            ): (
+                <div className="app__body">
             <Router>
+                 {/* Sidebar */}
+                 <Sidebar />
                 <Switch>
-                    {/* Sidebar */}
-                    <Sidebar />
                     <Route path="/rooms/:roomId">
                         {/* chat */}
                         <Chat />
                     </Route>
                     <Route path="/">
-                        <h1>Home Screen</h1>
+                        <Chat />
                     </Route>
                 </Switch>
             </Router>
             </div>
+            )}
+            
         </div>
     );
 }
